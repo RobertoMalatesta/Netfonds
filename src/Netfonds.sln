@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.20623.1 VSUPREVIEW
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4057F19F-F347-4C1F-AAF8-69888377122F}"
 EndProject
@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{60155D
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "..\Sandbox\Sandbox.csproj", "{27F528C9-7522-4B18-BFEF-7470A42711FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{27F528C9-7522-4B18-BFEF-7470A42711FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +36,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5EF7F08E-934D-44A2-A6D1-55D7583A6920} = {4057F19F-F347-4C1F-AAF8-69888377122F}
+		{27F528C9-7522-4B18-BFEF-7470A42711FE} = {4057F19F-F347-4C1F-AAF8-69888377122F}
 	EndGlobalSection
 EndGlobal
