@@ -7,7 +7,7 @@ C# implementation to pull market data from Netfonds.no
 - http://hopey.netfonds.no
 
 ## Example
-### Client
+```c#
 	var client = new NetfondsClient();
 
     var trades = client.GetTradesAsync(
@@ -21,3 +21,4 @@ C# implementation to pull market data from Netfonds.no
         symbol: "AAPL", 
         exchange: "O"
     ).Result;
+```
