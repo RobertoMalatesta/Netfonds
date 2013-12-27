@@ -1,14 +1,11 @@
-﻿using Netfonds.Models;
-using Netfonds.Net.Http;
-using Netfonds.Net.Http.Configuration;
+﻿using Netfonds.Net.Http;
 using Netfonds.Net.Http.Formatting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Text;
 using System.Threading.Tasks;
+using Quotes = System.Collections.Generic.List<Netfonds.Models.Quote>;
+using Trades = System.Collections.Generic.List<Netfonds.Models.Trade>;
 
 namespace Netfonds {
     public partial class NetfondsClient : IDisposable {
@@ -17,7 +14,6 @@ namespace Netfonds {
         private HttpClient _client;
         private volatile bool _disposed;
         public NetfondsClient(string uri = "http://hopey.netfonds.no") {
-            //_handler = new DefaultHttpMessageHandler();
             _client = new HttpClient(_handler);
             _client.BaseAddress = new Uri(uri);
         }
@@ -25,26 +21,20 @@ namespace Netfonds {
             Dispose(false);
         }
 
-        private Task<HttpResponseMessage> SendAsync(HttpMethod method, Action<IHttpRequestMessageConfigurator> configure) {
-            var configurator = new HttpRequestMessageConfigurator();
-
-            configurator.Method(method);
-            configurator.BaseAddress(_client.BaseAddress);
-            configure(configurator);
-
-            var request = configurator.Build();
-            return _client.SendAsync(request);
+        //http://hopey.netfonds.no/tradedump.php?date=20120423&paper=AAPL.O&csv_format=csv
+        public Task<Trades> GetTradesAsync(DateTimeOffset datetime = default(DateTimeOffset), string symbol = (string)null, string exchange = (string)null) {
+            return _client.SendAsync(x => x
+                .Method(HttpMethod.Get)
+                .Address("tradedump.php?date={0}&paper={1}.{2}&csv_format=csv", datetime.ToString("yyyyMMdd"), symbol, exchange)                
+            ).ReadAsAsync<Trades>(new TradeMediaTypeFormatter());
         }
-        public async Task<Trades> GetTradesAsync(Action<IGetTradesConfigurator> configure) {
-            var c = new GetTradesConfigurator();
-            configure(c);
 
-            var request = c.Build();
-
-            return await _client.SendAsync(request)
-                .GetAwaiter()
-                .GetResult()
-                .GetTradesAsync();                
+        //http://hopey.netfonds.no/posdump.php?date=20131223&paper=AAPL.O&csv_format=csv
+        public Task<Quotes> GetQuotesAsync(DateTimeOffset datetime = default(DateTimeOffset), string symbol = (string)null, string exchange = (string)null) {
+            return _client.SendAsync(x => x
+                .Method(HttpMethod.Get)
+                .Address("posdump.php?date={0}&paper={1}.{2}&csv_format=csv",datetime.ToString("yyyyMMdd"),symbol,exchange)
+            ).ReadAsAsync<Quotes>(new QuoteMediaTypeFormatter());
         }
 
         public void Dispose() {
@@ -62,6 +52,6 @@ namespace Netfonds {
     public static partial class Extensions {
         public static Task<Trades> GetTradesAsync(this HttpResponseMessage source) {
             return source.Content.ReadAsAsync<Trades>(new[] { new TradeMediaTypeFormatter() });
-        }
+        }        
     }
 }

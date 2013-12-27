@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Netfonds.Models;
+using Netfonds.Net.Http.Configurators;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Text;
 using System.Threading.Tasks;
+using Quotes = System.Collections.Generic.IEnumerable<Netfonds.Models.Quote>;
+using Trades = System.Collections.Generic.IEnumerable<Netfonds.Models.Trade>;
 
 namespace Netfonds {
     public static partial class Extensions {
@@ -48,8 +51,58 @@ namespace Netfonds {
             return new Uri(segments.Aggregate(self.AbsoluteUri, (current, segment) => string.Format("{0}/{1}", current.TrimEnd('/'), segment)));
         }
 
+        internal static Task<T> ReadAsAsync<T>(this Task<HttpResponseMessage> message, params MediaTypeFormatter[] formatters) {
+            var response = message
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
+
+            response.EnsureSuccessStatusCode();
+
+            return response.Content.ReadAsAsync<T>(formatters);
+        }
+
+        internal static Task<string> ReadAsStringAsync(this Task<HttpResponseMessage> message) {
+            var response = message
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
+
+            response.EnsureSuccessStatusCode();
+
+            return response.Content.ReadAsStringAsync();
+        }
+
+        internal static Task<T> ReadAsAsync<T>(this HttpResponseMessage message, MediaTypeFormatter formatter) {
+            return ReadAsAsync<T>(message.Content, formatter);
+        }
+
         internal static Task<T> ReadAsAsync<T>(this HttpContent content, MediaTypeFormatter formatter) {
             return content.ReadAsAsync<T>(new[] { formatter });
         }
+
+        internal static Task<HttpResponseMessage> SendAsync(this HttpClient client, Action<IHttpRequestMessageConfigurator> configure) {
+            var request = Configure<IHttpRequestMessageConfigurator, HttpRequestMessageConfigurator>(configure).Build();
+            return client.SendAsync(request);
+        }
+
+        internal static IHttpRequestMessageConfigurator Address(this IHttpRequestMessageConfigurator self, string format, params object[] args) {
+            return self.Address(format.FormatWith(args));
+        }
+
+        private static TResult Configure<TSource, TResult>(Action<TSource> configure) where TResult : TSource, new() {
+            var result = new TResult();
+            configure(result);
+            return result;
+        }
+
+        internal static DateTimeOffset Parse(this string source, string format, TimeZoneInfo timezone) {
+            var datetime = DateTime.ParseExact(source, format, null);
+            return new DateTimeOffset(datetime.Year, datetime.Month, datetime.Day, datetime.Hour, datetime.Minute, datetime.Second, datetime.Millisecond, timezone.GetUtcOffset(datetime));
+        }
+
+        internal static double Parse(this string source) {
+            return double.Parse(source);
+        }        
     }
 }

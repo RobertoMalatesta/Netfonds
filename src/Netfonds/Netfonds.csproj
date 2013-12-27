@@ -51,12 +51,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
+    <Compile Include="Models\Quote.cs" />
     <Compile Include="Models\Trade.cs" />
-    <Compile Include="Models\Trades.cs" />
     <Compile Include="NetfondsClient.cs" />
-    <Compile Include="NetfondsClient.GetTrades.cs" />
-    <Compile Include="Net\Http\Configuration\HttpRequestMessageConfigurator.cs" />
-    <Compile Include="Net\Http\Configuration\IHttpRequestMessageConfigurator.cs" />
+    <Compile Include="Net\Http\Configurators\HttpRequestMessageConfigurator.cs" />
+    <Compile Include="Net\Http\Configurators\IHttpRequestMessageConfigurator.cs" />
+    <Compile Include="Net\Http\Formatting\QuoteMediaTypeFormatter.cs" />
     <Compile Include="Net\Http\Formatting\TradeMediaTypeFormatter.cs" />
     <Compile Include="Net\Http\NetfondsDelegatingHandler.cs" />
     <Compile Include="Parameters.cs" />
