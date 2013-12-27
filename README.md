@@ -10,15 +10,15 @@ C# implementation to pull market data from Netfonds.no
 ```c#
 var client = new NetfondsClient();
 
-var trades = client.GetTradesAsync(
+var trades = await client.GetTradesAsync(
     datetime: DateTimeOffset.Now.AddDays(-3), 
     symbol: "AAPL", 
     exchange: "O"
-).Result;
+);
 
-var quotes = client.GetQuotesAsync(
+var quotes = await client.GetQuotesAsync(
     datetime: DateTimeOffset.Now.AddDays(-3), 
     symbol: "AAPL", 
     exchange: "O"
-).Result;
+);
 ```
